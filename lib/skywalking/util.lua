@@ -21,15 +21,44 @@ local MAX_ID_PART2 = 1000000000
 local MAX_ID_PART3 = 100000
 local SEQ = 1
 
+-- A simulation implementation of Java's System.currentTimeMillis() by following the SkyWalking protocol.
+-- Return the difference as string, measured in milliseconds, between the current time and midnight, January 1, 1970 UTC.
+-- But in using os.clock(), I am not sure whether it is accurate enough.
+local function timestamp()
+    local _, b = math.modf(os.clock())
+    if b == 0 then
+        b='000'
+    else
+        b=tostring(b):sub(3,5)
+    end
+
+    return os.time() * 1000 + b
+end
+_M.timestamp = timestamp
+
+-- Split the given string by the delimiter. The delimiter should be a literal string, such as '.', '-'
+local function split(str, delimiter)
+    local t = {}
+
+    for substr in string.gmatch(str, "[^".. delimiter.. "]*") do
+        if substr ~= nil and string.len(substr) > 0 then
+            table.insert(t,substr)
+        end
+    end
+
+    return t
+end
+_M.split = split
+
 function _M.newID()
     SEQ = SEQ + 1
-    return {_M.timestamp(), math.random( 0, MAX_ID_PART2), math.random( 0, MAX_ID_PART3) + SEQ}
+    return {timestamp(), math.random( 0, MAX_ID_PART2), math.random( 0, MAX_ID_PART3) + SEQ}
 end
 
 -- Format a trace/segment id into an array.
 -- An official ID should have three parts separated by '.' and each part of it is a number
 function _M.formatID(str)
-    local parts = _M.split(str, '.')
+    local parts = split(str, '.')
     if #parts ~= 3 then
         return nil
     end
@@ -44,33 +73,6 @@ end
 -- @param id is an array with length = 3
 function _M.id2String(id)
     return id[1] .. '.' .. id[2] .. '.' .. id[3]
-end
-
--- A simulation implementation of Java's System.currentTimeMillis() by following the SkyWalking protocol.
--- Return the difference as string, measured in milliseconds, between the current time and midnight, January 1, 1970 UTC.
--- But in using os.clock(), I am not sure whether it is accurate enough.
-function _M.timestamp()
-    local _, b = math.modf(os.clock())
-    if b == 0 then
-        b='000'
-    else
-        b=tostring(b):sub(3,5)
-    end
-
-    return os.time() * 1000 + b
-end
-
--- Split the given string by the delimiter. The delimiter should be a literal string, such as '.', '-'
-function _M.split(str, delimiter)
-    local t = {}
-
-    for substr in string.gmatch(str, "[^".. delimiter.. "]*") do
-        if substr ~= nil and string.len(substr) > 0 then
-            table.insert(t,substr)
-        end
-    end
-
-    return t
 end
 
 
