@@ -19,7 +19,7 @@ local lu = require('luaunit')
 local Util = require('util')
 
 TestUtil = {}
-    function TestUtil:testNewID()
+    function TestUtil.testNewID()
         local id = Util.newID()
 
         lu.assertNotNil(id[1])
@@ -27,7 +27,7 @@ TestUtil = {}
         lu.assertNotNil(id[3])
     end
 
-    function TestUtil:testTimestamp()
+    function TestUtil.testTimestamp()
         local id = Util.timestamp()
         lu.assertNotNil(id)
     end

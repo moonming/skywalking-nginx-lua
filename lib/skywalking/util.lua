@@ -51,7 +51,7 @@ end
 -- But in using os.clock(), I am not sure whether it is accurate enough.
 function _M.timestamp()
     local _, b = math.modf(os.clock())
-    if b==0 then
+    if b == 0 then
         b='000'
     else
         b=tostring(b):sub(3,5)
