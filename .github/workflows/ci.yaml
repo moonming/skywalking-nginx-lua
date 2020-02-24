@@ -68,4 +68,5 @@ jobs:
           cd ..
       - name: 'Run Nginx Lua Tests'
         run: |
+          export PATH=/usr/local/openresty-debug/nginx/sbin:/usr/local/openresty-debug/luajit/bin:$/usr/local/openresty-debug/bin:$PATH
           prove -Itest-nginx/lib -r t
