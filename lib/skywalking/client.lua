@@ -102,7 +102,7 @@ function Client:registerService(metadata_buffer, backend_http_uri)
         for i, result in ipairs(registerResults)
         do
             if result.key == serviceName then
-                local serviceId = result.value
+                local serviceId = w.value
                 log(DEBUG, "Service registered, service id = " .. serviceId)
                 metadata_buffer:set('serviceId', serviceId)
             end

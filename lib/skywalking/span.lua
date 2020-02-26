@@ -1,19 +1,19 @@
--- 
+--
 -- Licensed to the Apache Software Foundation (ASF) under one or more
 -- contributor license agreements.  See the NOTICE file distributed with
 -- this work for additional information regarding copyright ownership.
 -- The ASF licenses this file to You under the Apache License, Version 2.0
 -- (the "License"); you may not use this file except in compliance with
 -- the License.  You may obtain a copy of the License at
--- 
+--
 --    http://www.apache.org/licenses/LICENSE-2.0
--- 
+--
 -- Unless required by applicable law or agreed to in writing, software
 -- distributed under the License is distributed on an "AS IS" BASIS,
 -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
--- 
+--
 
 local spanLayer = require("span_layer")
 local Util = require('util')
@@ -120,7 +120,7 @@ function Span:createExitSpan(operationName, context, parent, peer, contextCarrie
             end
             entryServiceInstanceId = context.service_inst_id
         end
-        
+
         injectableRef.entry_service_instance_id = entryServiceInstanceId
         injectableRef.parent_service_instance_id = context.service_inst_id
         injectableRef.entry_endpoint_name = entryEndpointName
@@ -128,7 +128,7 @@ function Span:createExitSpan(operationName, context, parent, peer, contextCarrie
 
         local parentEndpointName
         local parentEndpointId = -1
-        
+
         if firstSpan.is_entry then
             parentEndpointName = firstSpan.operation_name
             parentEndpointId = 0
@@ -142,10 +142,10 @@ function Span:createExitSpan(operationName, context, parent, peer, contextCarrie
     return span
 end
 
--- Create an local span. Local span is usually not used. 
+-- Create an local span. Local span is usually not used.
 -- Typically, only one entry span and one exit span in the Nginx tracing segment.
 function Span:createLocalSpan(operationName, context, parent)
-    local span = self:new(operationName, context, parent) 
+    local span = self:new(operationName, context, parent)
     return span
 end
 
@@ -159,13 +159,13 @@ function Span:new(operationName, context, parent)
 
     o.operation_name = operationName
     o.span_id = context.internal:nextSpanID()
-    
+
     if parent == nil then
         -- As the root span, the parent span id is -1
         o.parent_span_id = -1
     else
         o.parent_span_id = parent.span_id
-    end 
+    end
 
     context.internal:addActive(o)
     -- o.start_time = Util.timestamp()
@@ -213,7 +213,7 @@ function Span:finishWithDuration(duration)
     end
 
     self:finish(self.start_time + duration)
-    
+
     return self
 end
 
@@ -242,11 +242,11 @@ function Span:setComponentId(componentId)
     return self
 end
 
-function Span:setLayer(spanLayer)
+function Span:setLayer(layer)
     if self.is_noop then
         return self
     end
-    self.layer = spanLayer
+    self.layer = layer
 
     return self
 end
@@ -294,7 +294,7 @@ function Span:transform()
     if #self.refs > 0 then
         spanBuilder.refs = {}
         for i, ref in ipairs(self.refs)
-        do 
+        do
             spanBuilder.refs[#spanBuilder.refs + 1] = ref:transform()
         end
     end
